@@ -1,5 +1,9 @@
 import { response } from "express";
 
+import {Usuario} from '../models/user.js'
+
+import bcryptjs from 'bcryptjs'
+
 export const usuariosGet = (req, res = response) => {
 
     // Los argumentos luego de un ? son OPCIONALES y Express ya los parsea por mi
@@ -29,9 +33,27 @@ export const usuariosPut = (req, res = response) => {
     });
 }
 
-export const usuariosPost = (req, res = response) => {
+export const usuariosPost = async(req, res = response) => {
+
+    
+    
+    const {nombre, correo, password, role} = req.body;
+    const usuario = new Usuario( {nombre, correo, password, role}  );
+
+    // Verificar si el correo existe
+
+
+
+    // Encriptar la contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync( password, salt );
+
+    // Guardar usuario en la BD
+    await usuario.save(); 
+
     res.json({
-        mmsg: 'post API'
+        mmsg: 'post API',
+        usuario
     });
 }
 

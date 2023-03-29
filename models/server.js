@@ -7,6 +7,8 @@ dotenv.config()
 
 import { router } from '../routes/user.js';
 
+import { dbCNN } from '../db/config.js'
+
 
 class Server {
 
@@ -17,11 +19,18 @@ class Server {
 
         this.usuariosPath = '/api/usuarios'
 
+        //Conectar a base de datos
+        this.dbConnection();
+
         // Middlewares: Funciones que van a añadirle otra funcicionalidad al webserver, es una funcion que siempre va a ejecutarse al levantar el servidor
         this.middlewares();
 
         // Rutas de mi app
         this.routes();
+    }
+
+    async dbConnection() { 
+        await dbCNN()
     }
 
     middlewares() {
@@ -45,7 +54,7 @@ class Server {
     listen() {
 
         this.app.listen(this.port, () => {
-            console.log(`Listening at http://localhost:${this.port}`)
+            console.log(`Listening at http://localhost:${this.port}`.bgGreen)
         })
     }
 
