@@ -9,7 +9,6 @@ dotenv.config()
 const dbCNN = async () => { //DataBaseConnection
 
     try {
-s
         // Lo siguiente está comentado porque es del video del Curso de node pero esta desactualizado. y no son necesarios:
 
         // await mongoose.connect( process.env.MONGODB_CNN, {

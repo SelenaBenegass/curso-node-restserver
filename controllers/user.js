@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import {Usuario} from '../models/user.js'
+import { Usuario } from '../models/user.js'
 
 import bcryptjs from 'bcryptjs'
 
@@ -9,7 +9,7 @@ export const usuariosGet = (req, res = response) => {
     // Los argumentos luego de un ? son OPCIONALES y Express ya los parsea por mi
     // ejemplo: GET http://localhost:8080/api/usuarios?q=buscar&nombre=maria&apikey=1234&edad=25
 
-    const {q, nombre = 'No name', apikey} = req.query; //desestructuro los parametros que me importan
+    const { q, nombre = 'No name', apikey } = req.query; //desestructuro los parametros que me importan
 
     res.json({
         msg: 'get API',
@@ -33,23 +33,27 @@ export const usuariosPut = (req, res = response) => {
     });
 }
 
-export const usuariosPost = async(req, res = response) => {
+export const usuariosPost = async (req, res = response) => {
 
-    
-    
-    const {nombre, correo, password, role} = req.body;
-    const usuario = new Usuario( {nombre, correo, password, role}  );
+    const { nombre, correo, password, role } = req.body;
+    const usuario = new Usuario({ nombre, correo, password, role });
 
     // Verificar si el correo existe
-
+    const existeEmail = await Usuario.findOne({ correo });
+    if (existeEmail) {
+        //Si existe el email debemos devolver un error (bad request)
+        return res.status(400).json({ 
+            msg: 'Ese correo ya está registrado'
+        });
+    }
 
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync( password, salt );
+    usuario.password = bcryptjs.hashSync(password, salt);
 
     // Guardar usuario en la BD
-    await usuario.save(); 
+    await usuario.save();
 
     res.json({
         mmsg: 'post API',

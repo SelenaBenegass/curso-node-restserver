@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator"
 
-const validarCampos = (req, res, next) => { //se ua el next para avisar que pase al siguiente middleware
+const validarCampos = (req, res, next) => { //se usa el next para avisar que pase al siguiente middleware
 
     const errors = validationResult(req);
 
@@ -10,7 +10,7 @@ const validarCampos = (req, res, next) => { //se ua el next para avisar que pase
 
     }
 
-    next();
+    next(); //Si llega a este punto sigue el siguiente middleware
 
 }
 

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { check } from 'express-validator';
-
+import { validarCampos } from '../middlewares/validar-campos.js';
 import {
     usuariosDelete,
     usuariosGet,
@@ -8,7 +8,7 @@ import {
     usuariosPut
 } from '../controllers/user.js'
 
-import { validarCampos } from '../middlewares/validar-campos.js';
+
 
 export const router = Router();
 
@@ -20,7 +20,13 @@ router.post('/', [
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('password', 'El password es obligatorio y debe contener al menos 6 caracteres.').isLength({ min: 6}),
     check('correo', 'El correo no es válido').isEmail(),
-    check('role', 'El rol no es válido').isIn( ['ADMIN_ROLE', 'USER_ROLE'] ),
+    // check('role', 'El rol no es válido').isIn( ['ADMIN_ROLE', 'USER_ROLE'] ),
+    check('rol').custom(async(rol='') => {
+        const existeRol = await Role.findOne({rol});
+        if(!existeRol){
+            throw new Error(`El rol: ${rol} no existe.`)
+        }
+    }),
     validarCampos
 ], usuariosPost);
 
