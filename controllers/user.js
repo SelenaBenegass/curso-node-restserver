@@ -26,9 +26,7 @@ export const usuariosGet = (req, res = response) => {
 export const usuariosPut = async (req, res = response) => {
 
     const { id } = req.params;
-    const { password, google, correo, ...datos } = req.body;
-
-    //TODO validar contra la bd
+    const { _id, password, google, correo, ...datos } = req.body;
 
     if (password) {
         // Encriptar la contraseña
@@ -40,7 +38,8 @@ export const usuariosPut = async (req, res = response) => {
 
     res.json({
         msg: 'put API',
-        id //se va a mostrar como un string
+        id, //se va a mostrar como un string
+        usuario
     });
 }
 

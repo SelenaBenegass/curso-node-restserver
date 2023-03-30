@@ -18,7 +18,17 @@ const existeEmail = await Usuario.findOne({ correo });
     }
 }
 
+// Esta función valida que exista un usario en la base de datos con el id recibido
+const existeUsuarioById = async(id='') => {
+    const existeUsuario = await Usuario.findById({ id });
+        if (!existeUsuario) {
+            //Si el Usuario no existe debemos devolver un error
+            throw new Error(`El id: ${id}, no encuentra registrado.`)
+        }
+    }
+
 export {
     esRoleValido,
     emailExiste,
+    existeUsuarioById,
 }
