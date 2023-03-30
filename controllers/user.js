@@ -23,9 +23,20 @@ export const usuariosGet = (req, res = response) => {
     //       si vienen parametros que no mencione, simplemente los desprecio
 }
 
-export const usuariosPut = (req, res = response) => {
+export const usuariosPut = async (req, res = response) => {
 
-    const id = req.params.id;
+    const { id } = req.params;
+    const { password, google, correo, ...datos } = req.body;
+
+    //TODO validar contra la bd
+
+    if (password) {
+        // Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync();
+        datos.password = bcryptjs.hashSync(password, salt);
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, datos);
 
     res.json({
         msg: 'put API',
@@ -37,10 +48,6 @@ export const usuariosPost = async (req, res = response) => {
 
     const { nombre, correo, password, role } = req.body;
     const usuario = new Usuario({ nombre, correo, password, role });
-
-    // Verificar si el correo existe
-    
-
 
     // Encriptar la contraseña
     const salt = bcryptjs.genSaltSync();
