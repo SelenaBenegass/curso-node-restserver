@@ -39,13 +39,7 @@ export const usuariosPost = async (req, res = response) => {
     const usuario = new Usuario({ nombre, correo, password, role });
 
     // Verificar si el correo existe
-    const existeEmail = await Usuario.findOne({ correo });
-    if (existeEmail) {
-        //Si existe el email debemos devolver un error (bad request)
-        return res.status(400).json({ 
-            msg: 'Ese correo ya está registrado'
-        });
-    }
+    
 
 
     // Encriptar la contraseña
@@ -56,7 +50,7 @@ export const usuariosPost = async (req, res = response) => {
     await usuario.save();
 
     res.json({
-        mmsg: 'post API',
+        msg: 'post API',
         usuario
     });
 }
