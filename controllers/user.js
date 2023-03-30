@@ -4,18 +4,18 @@ import { Usuario } from '../models/user.js'
 
 import bcryptjs from 'bcryptjs'
 
-export const usuariosGet = (req, res = response) => {
+export const usuariosGet = async (req, res = response) => {
 
     // Los argumentos luego de un ? son OPCIONALES y Express ya los parsea por mi
     // ejemplo: GET http://localhost:8080/api/usuarios?q=buscar&nombre=maria&apikey=1234&edad=25
 
-    const { q, nombre = 'No name', apikey } = req.query; //desestructuro los parametros que me importan
+    const { limite = 5, desde = 0 } = req.query; //así desestructuro los parametros que me importan y con el = le doy el valor por defecto
 
+    const usuarios = await Usuario.find()
+        .skip(Number(desde))
+        .limit(Number(limite));
     res.json({
-        msg: 'get API',
-        q,
-        nombre,
-        apikey
+        usuarios
     });
 
     // nota: si en el url no vienen algunos de los parametros que quiero, seran undefined
@@ -36,11 +36,7 @@ export const usuariosPut = async (req, res = response) => {
 
     const usuario = await Usuario.findByIdAndUpdate(id, datos);
 
-    res.json({
-        msg: 'put API',
-        id, //se va a mostrar como un string
-        usuario
-    });
+    res.json(usuario);
 }
 
 export const usuariosPost = async (req, res = response) => {
@@ -55,10 +51,7 @@ export const usuariosPost = async (req, res = response) => {
     // Guardar usuario en la BD
     await usuario.save();
 
-    res.json({
-        msg: 'post API',
-        usuario
-    });
+    res.json(usuario);
 }
 
 export const usuariosDelete = (req, res = response) => {
