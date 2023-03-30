@@ -24,7 +24,7 @@ const UsuarioSchema = Schema({
     role: {
         type: String,
         require: true,
-        emun: ['ADMIN_ROLE', 'USER_ROLE']
+        // emun: ['ADMIN_ROLE', 'USER_ROLE']
     },
 
     estado: {
@@ -38,6 +38,13 @@ const UsuarioSchema = Schema({
     },
 
 });
+
+UsuarioSchema.methods.toJSON = function(){
+    const {__v,password, ...usuario} = this.toObject(); //...usuario : unifica el resto de los parametros en uno solo, llamado "usuario"
+    return usuario;
+}
+
+
 
 // Lo siguiente esta comentado porque es del video del curso de node pero esta desactualizado:
 
