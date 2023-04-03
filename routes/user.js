@@ -29,7 +29,7 @@ router.post('/', [
      * Estos check serían las reglas que verifican que los datos ingresados sean correctos.
      * */
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
-    check('password', 'El password es obligatorio y debe contener al menos 6 caracteres.').isLength({ min: 6}),
+    check('password', 'El password es obligatorio y debe contener al menos 6 caracteres.').isLength({ min: 6 }),
     check('correo', 'El correo no es válido').isEmail(),
     check('correo').custom(emailExiste),
     // check('role', 'El rol no es válido').isIn( ['ADMIN_ROLE', 'USER_ROLE'] ), //Acá se verifica que el rol ingresado exista en el arreglo
@@ -37,6 +37,10 @@ router.post('/', [
     validarCampos
 ], usuariosPost);
 
-router.delete('/', usuariosDelete);
+router.delete('/:id', [
+    check('id', 'No es un id válido').isMongoId(),
+    check('id').custom(existeUsuarioById),
+    validarCampos
+], usuariosDelete);
 
 export default router;

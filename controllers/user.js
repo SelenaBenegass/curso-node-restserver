@@ -10,11 +10,19 @@ export const usuariosGet = async (req, res = response) => {
     // ejemplo: GET http://localhost:8080/api/usuarios?q=buscar&nombre=maria&apikey=1234&edad=25
 
     const { limite = 5, desde = 0 } = req.query; //así desestructuro los parametros que me importan y con el = le doy el valor por defecto
+    const query = { estado: true };
+    const [total, usuarios] = await Promise.all([
+        //total de usuarios activos (con "estado: true")
+        Usuario.countDocuments(query),
+        //usuarios activos (con "estado: true")
+        Usuario.find(query)
+            // .sort({nombre: 1}) //Orden ascendente
+            .skip(Number(desde))
+            .limit(Number(limite)),
+    ]);
 
-    const usuarios = await Usuario.find()
-        .skip(Number(desde))
-        .limit(Number(limite));
     res.json({
+        total,
         usuarios
     });
 
@@ -54,8 +62,9 @@ export const usuariosPost = async (req, res = response) => {
     res.json(usuario);
 }
 
-export const usuariosDelete = (req, res = response) => {
-    res.json({
-        msg: 'delete API'
-    });
+export const usuariosDelete = async (req, res = response) => {
+    const { id } = req.params;
+    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
+    res.json(usuario);
 }
+
