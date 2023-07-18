@@ -40,7 +40,8 @@ const UsuarioSchema = Schema({
 });
 
 UsuarioSchema.methods.toJSON = function(){
-    const {__v,password, ...usuario} = this.toObject(); //...usuario : unifica el resto de los parametros en uno solo, llamado "usuario"
+    const {__v,password,_id, ...usuario} = this.toObject(); //...usuario : unifica el resto de los parametros en uno solo, llamado "usuario"
+    usuario.uid = _id;
     return usuario;
 }
 

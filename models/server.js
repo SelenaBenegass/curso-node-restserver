@@ -5,19 +5,22 @@ import cors from 'cors'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-import { router } from '../routes/user.js';
-
+import { authRouter, userRouter, catRouter } from '../routes/index.js';
 import { dbCNN } from '../db/config.js'
 
 
-class Server {
+export class Server {
 
     constructor() {
         this.app = express();
 
         this.port = process.env.PORT;
 
-        this.usuariosPath = '/api/usuarios'
+        this.paths = {
+            auth: '/api/auth',
+            categorias: '/api/categorias',
+            usuarios: '/api/usuarios',
+        }
 
         //Conectar a base de datos
         this.dbConnection();
@@ -29,7 +32,7 @@ class Server {
         this.routes();
     }
 
-    async dbConnection() { 
+    async dbConnection() {
         await dbCNN()
     }
 
@@ -39,16 +42,17 @@ class Server {
         this.app.use(cors());
 
         // Lectura y parseo del body
-        this.app.use( express.json() );
+        this.app.use(express.json());
 
         // Directorio publico 
         this.app.use(express.static('public'));
     }
 
     routes() {
-
-        this.app.use(this.usuariosPath, router);
-
+        this.app.use(this.paths.auth, authRouter);
+        this.app.use(this.paths.categorias, catRouter);
+        this.app.use(this.paths.usuarios, userRouter);
+        
     }
 
     listen() {
@@ -60,5 +64,3 @@ class Server {
 
 
 }
-
-export default Server;

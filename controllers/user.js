@@ -1,6 +1,6 @@
 import { response } from "express";
 
-import { Usuario } from '../models/user.js'
+import { Usuario } from '../models/index.js'
 
 import bcryptjs from 'bcryptjs'
 
@@ -41,7 +41,6 @@ export const usuariosPut = async (req, res = response) => {
         const salt = bcryptjs.genSaltSync();
         datos.password = bcryptjs.hashSync(password, salt);
     }
-
     const usuario = await Usuario.findByIdAndUpdate(id, datos);
 
     res.json(usuario);
@@ -64,7 +63,8 @@ export const usuariosPost = async (req, res = response) => {
 
 export const usuariosDelete = async (req, res = response) => {
     const { id } = req.params;
-    const usuario = await Usuario.findByIdAndUpdate(id, { estado: false });
-    res.json(usuario);
+    const usuarioD = await Usuario.findByIdAndUpdate(id, { estado: false });
+    // const usuarioAutenticado = req.usuario;
+    res.json({usuarioD});
 }
 

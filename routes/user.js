@@ -1,8 +1,14 @@
 import { Router } from 'express'
 import { check } from 'express-validator';
 
-import { validarCampos } from '../middlewares/validar-campos.js';
-import { emailExiste, esRoleValido, existeUsuarioById } from '../helpers/db-validators.js';
+// - Antes:
+// import { validarCampos } from '../middlewares/validar-campos.js';
+// import { validarJWT } from '../middlewares/validar-jwt.js';
+// import { esAdminRole, tieneRol } from '../middlewares/validar-roles.js';
+// - Despues:
+import { validarCampos, validarJWT, esAdminRole, tieneRol } from '../middlewares/index.js'; 
+
+import { emailExiste, esRoleValido, existeUsuarioById, esUsuarioActivo } from '../helpers/db-validators.js';
 
 import {
     usuariosDelete,
@@ -12,19 +18,22 @@ import {
 } from '../controllers/user.js'
 
 
-export const router = Router();
 
-router.get('/', usuariosGet);
 
-router.put('/:id', [
+export const userRouter = Router();
+
+userRouter.get('/', usuariosGet);
+
+userRouter.put('/:id', [
     check('id', 'No es un id válido').isMongoId(),
-    check('id').custom(existeUsuarioById),
     check('rol').custom(esRoleValido),
+    check('id').custom(existeUsuarioById),
+    check('id').custom(esUsuarioActivo),
     validarCampos
 ], usuariosPut);
 
 
-router.post('/', [
+userRouter.post('/', [
     /**
      * Estos check serían las reglas que verifican que los datos ingresados sean correctos.
      * */
@@ -37,10 +46,14 @@ router.post('/', [
     validarCampos
 ], usuariosPost);
 
-router.delete('/:id', [
+userRouter.delete('/:id', [
+    validarJWT,
+    // esAdminRole, //Este middleware obliga que si o si sea administrador
+    tieneRol('USER_ROLE', 'VENTAS_ROLE'), //Este middelware es más "flexible" le puedo mandar los roles que tienen permiso
     check('id', 'No es un id válido').isMongoId(),
     check('id').custom(existeUsuarioById),
+    check('id').custom(esUsuarioActivo),
     validarCampos
 ], usuariosDelete);
 
-export default router;
+export default userRouter;
